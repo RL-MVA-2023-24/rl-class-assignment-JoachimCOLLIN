@@ -97,7 +97,7 @@ class ProjectAgent:
         self.update_target_tau = config['update_target_tau'] if 'update_target_tau' in config.keys() else 0.005
 
         # saving best model weights
-        self.path_model = 'models/{model_name}.pt'
+        self.path_model = 'src/models/{model_name}.pt'
         self.best_model = None
         self.best_value = 0
         
