@@ -1,6 +1,7 @@
 
 import numpy as np
 import torch
+import os
 import torch.nn as nn
 from copy import deepcopy
 import random
@@ -140,6 +141,8 @@ class ProjectAgent:
 
         else:
             model_score = '?'
+
+        print(os.getcwd())
         print(f'Loading weights from {model_name} model woth score {model_score}...')
         self.model.load_state_dict(torch.load(self.path_model.format(model_name=model_name + ('_' +model_score)*(model_score != '?'))))
         print('Loading finished ...')
