@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from copy import deepcopy
 import random
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
