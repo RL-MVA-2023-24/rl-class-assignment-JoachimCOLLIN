@@ -44,12 +44,12 @@ class ProjectAgent:
                 'learning_rate': 0.0005,
                 'gamma': 0.95,
                 'buffer_size': 1000000,
-                'epsilon_min': 0.03,
+                'epsilon_min': 0.02,
                 'epsilon_max': 1.,
                 'epsilon_decay_period': 7000,
                 'epsilon_delay_decay': 100,
                 'batch_size': 800,
-                'gradient_steps': 4,
+                'gradient_steps': 5,
                 'update_target_strategy': 'replace',
                 'update_target_freq': 70,
                 'update_target_tau': 0.005,
@@ -132,7 +132,7 @@ class ProjectAgent:
         print('Saving finished ... ')
 
 
-    def load(self, model_name='layer7_neurons128_28,671,221,016'):
+    def load(self, model_name='layer7_neurons128_19,690,188,390'):
         """
         load model from folder /models
         """
@@ -246,7 +246,7 @@ class ProjectAgent:
 
 # Train agent
 # agent = ProjectAgent()
-# scores = agent.train(env, 200, model_name='layer7_neurons128')
+# scores = agent.train(env, 200, model_name='layer7_neurons256')
 # plt.plot(scores)
 # plt.show()
    
