@@ -54,7 +54,7 @@ class ProjectAgent:
                 'update_target_freq': 70,
                 'update_target_tau': 0.005,
                 'criterion': torch.nn.SmoothL1Loss(),
-                'nb_neurons':128
+                'nb_neurons':256
                 }
 
         self.nb_neurons=config['nb_neurons']
@@ -132,7 +132,7 @@ class ProjectAgent:
         print('Saving finished ... ')
 
 
-    def load(self, model_name='layer7_neurons128_19,690,188,390'):
+    def load(self, model_name='layer7_neurons256_31,164,224,582'):
         """
         load model from folder /models
         """
