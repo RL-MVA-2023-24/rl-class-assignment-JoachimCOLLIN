@@ -37,6 +37,7 @@ class ProjectAgent:
     def __init__(self, config=None, model=None):
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = 'cpu'
 
         if config == None:
             config = {
@@ -144,7 +145,7 @@ class ProjectAgent:
 
         print(os.getcwd())
         print(f'Loading weights from {model_name} model woth score {model_score}...')
-        self.model.load_state_dict(torch.load(self.path_model.format(model_name=model_name + ('_' +model_score)*(model_score != '?'))))
+        self.model.load_state_dict(torch.load(self.path_model.format(model_name=model_name + ('_' +model_score)*(model_score != '?')), map_location=torch.device('cpu')))
         print('Loading finished ...')
 
     def act(self, state, use_random=False, epsilon=1.0):
