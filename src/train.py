@@ -9,10 +9,13 @@ import random
 
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
+from evaluate import evaluate_HIV, evaluate_HIV_population
+
 
 env = TimeLimit(
-    env=HIVPatient(domain_randomization=False), max_episode_steps=200
+    env=HIVPatient(domain_randomization=True), max_episode_steps=300
 )  
+
 
 
 class ReplayBuffer:
@@ -41,17 +44,17 @@ class ProjectAgent:
 
         if config == None:
             config = {
-                'learning_rate': 0.0005,
+                'learning_rate': 0.001,
                 'gamma': 0.95,
                 'buffer_size': 1000000,
-                'epsilon_min': 0.02,
-                'epsilon_max': 1.,
-                'epsilon_decay_period': 7000,
-                'epsilon_delay_decay': 100,
-                'batch_size': 800,
-                'gradient_steps': 5,
-                'update_target_strategy': 'replace',
-                'update_target_freq': 70,
+                'epsilon_min': 0.01,
+                'epsilon_max': 0.99,
+                'epsilon_decay_period': 10000,
+                'epsilon_delay_decay': 500,
+                'batch_size': 1024,
+                'gradient_steps': 3,
+                'update_target_strategy': 'ema',
+                'update_target_freq': 300,
                 'update_target_tau': 0.005,
                 'criterion': torch.nn.SmoothL1Loss(),
                 'nb_neurons':256
@@ -73,10 +76,10 @@ class ProjectAgent:
                 nn.ReLU(), 
                 nn.Linear(self.nb_neurons, self.nb_neurons),
                 nn.ReLU(), 
-                nn.Linear(self.nb_neurons, self.nb_neurons),
-                nn.ReLU(), 
                 nn.Linear(self.nb_neurons, self.nb_actions)
                 ).to(device)
+            
+
 
         self.gamma = config['gamma'] if 'gamma' in config.keys() else 0.95
         self.batch_size = config['batch_size'] if 'batch_size' in config.keys() else 100
@@ -100,7 +103,10 @@ class ProjectAgent:
         # saving best model weights
         self.path_model = 'src/models/{model_name}.pt'
         self.best_model = None
+        self.best_model_eval = None
         self.best_value = 0
+        self.best_eval = 0
+        self.eval_start = 10
         
 
         
@@ -132,7 +138,7 @@ class ProjectAgent:
         print('Saving finished ... ')
 
 
-    def load(self, model_name='layer7_neurons256_31,164,224,582'):
+    def load(self, model_name='l6_l256_max'):
         """
         load model from folder /models
         """
@@ -227,6 +233,14 @@ class ProjectAgent:
                     self.best_model = deepcopy(self.model) 
                     self.best_value = int(episode_cum_reward)
 
+                # if (episode >= self.eval_start):
+                #     eval = evaluate_HIV(agent=self, nb_episode=1)
+                #     print('EVAL:', eval)
+                #     if eval > self.best_eval:
+                #         self.best_eval = int(eval)
+                #         self.best_model_eval= deepcopy(self.model) 
+                    
+
                 episode_return.append(episode_cum_reward)
                 episode_cum_reward = 0
                 
@@ -236,9 +250,13 @@ class ProjectAgent:
 
         # saving model
         if model_name == None:
-            self.save(self.best_model, 'base')
+            # self.save(self.best_model_eval, 'best_eval_base')
+            self.save(self.best_model, 'best_model_base')
+
         else:
-            self.save(self.best_model, model_name + f'_{self.best_value}')
+            # self.save(self.best_model_eval, 'best_eval' + '_' + model_name + f'_{self.best_eval}')
+            self.save(self.best_model_eval, 'best_model' + '_' + model_name + f'_{self.best_value}')
+
 
         return episode_return
 
@@ -246,7 +264,8 @@ class ProjectAgent:
 
 # Train agent
 # agent = ProjectAgent()
-# scores = agent.train(env, 200, model_name='layer7_neurons256')
+# agent.load(model_name = 'layer7_neurons256_34,712,772,169')
+# scores = agent.train(env, 200, model_name='l6_256')
 # plt.plot(scores)
 # plt.show()
    
